@@ -1,5 +1,8 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/customlogoauth.dart';
@@ -42,8 +45,35 @@ class ForgotPassword extends StatelessWidget {
                 Center(
                     child: CustomButtonAuth(
                         title: "Send",
-                        onPressed: () {
-                          if (formkey.currentState!.validate()) {}
+                        onPressed: () async {
+                          if (formkey.currentState!.validate()) {
+                            try {
+                              await FirebaseAuth.instance
+                                  .sendPasswordResetEmail(email: email.text);
+                              Navigator.of(context)
+                                  .pushReplacementNamed("homepage");
+
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.success,
+                                animType: AnimType.rightSlide,
+                                title: 'success',
+                                desc:
+                                    'الرجاء الذهاب الي البريد لادخال كلمه السر الجديده وتسجيل الدخول ',
+                              ).show();
+                            } catch (e) {
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.rightSlide,
+                                title: 'error',
+                                desc: 'لا يوجد بريد بهذا الاسم تاكد من ذالك ',
+                              ).show();
+                              if (kDebugMode) {
+                                print(e.toString());
+                              }
+                            }
+                          }
                         })),
               ],
             ),

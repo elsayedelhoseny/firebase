@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:tests/auth/forgot_password.dart';
 import 'package:tests/auth/login.dart';
 import 'package:tests/auth/signup.dart';
+import 'package:tests/categories/add_category.dart';
 import 'package:tests/firebase_options.dart';
 import 'package:tests/home/homepage.dart';
 
@@ -43,6 +44,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+          appBarTheme: AppBarTheme(
+              backgroundColor: Colors.grey[200],
+              iconTheme: const IconThemeData(color: Colors.orange),
+              titleTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.orange))),
       debugShowCheckedModeBanner: false,
       home: (FirebaseAuth.instance.currentUser != null &&
               FirebaseAuth.instance.currentUser!.emailVerified)
@@ -53,6 +62,7 @@ class _MyAppState extends State<MyApp> {
         "login": (context) => const Login(),
         "homepage": (context) => const Homepage(),
         "forgotpassword": (context) => ForgotPassword(),
+        "addcategory": (context) => AddCategory(),
       },
     );
   }

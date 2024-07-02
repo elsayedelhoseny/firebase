@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tests/auth/login.dart';
+import 'package:tests/auth/signup.dart';
 import 'package:tests/firebase_options.dart';
+import 'package:tests/home/homepage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,17 +15,42 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        if (kDebugMode) {
+          print(' ========== User is currently signed out!');
+        }
+      } else {
+        if (kDebugMode) {
+          print('================ User is signed in!');
+        }
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const Login(),
+      debugShowCheckedModeBanner: false,
+      home: FirebaseAuth.instance.currentUser == null
+          ? const Login()
+          : const Homepage(),
+      routes: {
+        "signup": (context) => const SignUp(),
+        "login": (context) => const Login(),
+        "homepage": (context) => const Homepage(),
+      },
     );
   }
 }

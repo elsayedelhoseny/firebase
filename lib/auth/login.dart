@@ -3,6 +3,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/customlogoauth.dart';
 import 'package:tests/components/textformfield.dart';
@@ -18,6 +19,22 @@ class _LoginState extends State<Login> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  Future signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) {
+      return;
+    }
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    Navigator.pushNamedAndRemoveUntil(context, 'homepage', (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +107,20 @@ class _LoginState extends State<Login> {
                     final credential = await FirebaseAuth.instance
                         .signInWithEmailAndPassword(
                             email: email.text, password: password.text);
-                    Navigator.pushReplacementNamed(context, 'homepage');
+                    if (FirebaseAuth.instance.currentUser!.emailVerified) {
+                      Navigator.of(context).pushReplacementNamed("homepage");
+                    } else {
+                      FirebaseAuth.instance.currentUser!
+                          .sendEmailVerification();
+
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.error,
+                        animType: AnimType.rightSlide,
+                        title: 'Error',
+                        desc: 'الرجاء تفعيل الحساب اولا ',
+                      ).show();
+                    }
                   } on FirebaseAuthException catch (e) {
                     if (e.code == 'user-not-found') {
                       AwesomeDialog(
@@ -119,7 +149,9 @@ class _LoginState extends State<Login> {
                   borderRadius: BorderRadius.circular(20)),
               color: Colors.red[700],
               textColor: Colors.white,
-              onPressed: () {},
+              onPressed: () {
+                GoogleSignIn();
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

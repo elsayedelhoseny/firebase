@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -19,6 +20,8 @@ class _HomepageState extends State<Homepage> {
             actions: [
               GestureDetector(
                   onTap: () async {
+                    GoogleSignIn googleSignIn = GoogleSignIn();
+                    googleSignIn.disconnect();
                     await FirebaseAuth.instance.signOut();
                     Navigator.pushNamedAndRemoveUntil(
                         context, 'login', (route) => false);
@@ -32,12 +35,10 @@ class _HomepageState extends State<Homepage> {
                   ))
             ],
           ),
-          body: ListView(
-            children: const [
-              // Text(
-              //   "How Are You",
-              // ),
-            ],
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Center(child: Text("welcome"))],
           )),
     );
   }

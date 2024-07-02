@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:tests/auth/forgot_password.dart';
 import 'package:tests/auth/login.dart';
 import 'package:tests/auth/signup.dart';
 import 'package:tests/firebase_options.dart';
@@ -51,6 +52,7 @@ class _MyAppState extends State<MyApp> {
         "signup": (context) => const SignUp(),
         "login": (context) => const Login(),
         "homepage": (context) => const Homepage(),
+        "forgotpassword": (context) => ForgotPassword(),
       },
     );
   }

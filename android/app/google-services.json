@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "912909461876",
+    "project_id": "tessst-2aafc",
+    "storage_bucket": "tessst-2aafc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912909461876:android:47275ec3b8451ae882a421",
+        "android_client_info": {
+          "package_name": "com.example.tests"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB24BzpR7I9C2-PTnyDu3IjKIP8dd84KxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

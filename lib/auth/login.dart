@@ -3,7 +3,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/customlogoauth.dart';
 import 'package:tests/components/textformfield.dart';
@@ -69,7 +68,7 @@ class _LoginState extends State<Login> {
                       return null;
                     },
                     hinttext: "ُEnter Your Password",
-                    mycontroller: email),
+                    mycontroller: password),
                 Container(
                   margin: const EdgeInsets.only(top: 10, bottom: 20),
                   alignment: Alignment.topRight,
@@ -91,7 +90,7 @@ class _LoginState extends State<Login> {
                     final credential = await FirebaseAuth.instance
                         .signInWithEmailAndPassword(
                             email: email.text, password: password.text);
-                    Navigator.pushReplacementNamed(context, '/homepage');
+                    Navigator.pushReplacementNamed(context, 'homepage');
                   } on FirebaseAuthException catch (e) {
                     if (e.code == 'user-not-found') {
                       AwesomeDialog(

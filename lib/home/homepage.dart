@@ -19,8 +19,10 @@ class _HomepageState extends State<Homepage> {
   bool isLoading = true;
 
   getData() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('category').get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('category')
+        .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .get();
     data.addAll(querySnapshot.docs);
     isLoading = false;
     setState(() {});
@@ -93,7 +95,9 @@ class _HomepageState extends State<Homepage> {
                                 dialogType: DialogType.warning,
                                 animType: AnimType.rightSlide,
                                 title: 'Warning',
-                                desc: 'هل انت متاكد من عمليه الحذف ؟ ',
+                                desc: 'اختر ماذا تريد ؟ ',
+                                btnCancelText: 'حذف',
+                                btnOkText: 'تعديل ',
                                 btnOkOnPress: () async {
                                   await FirebaseFirestore.instance
                                       .collection('category')
@@ -102,10 +106,13 @@ class _HomepageState extends State<Homepage> {
                                   Navigator.pushReplacementNamed(
                                       context, 'homepage');
                                 },
-                                btnCancelOnPress: () {
-                                  if (kDebugMode) {
-                                    print("========================Cancel");
-                                  }
+                                btnCancelOnPress: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('category')
+                                      .doc(data[index].id)
+                                      .delete();
+                                  Navigator.pushReplacementNamed(
+                                      context, 'homepage');
                                 },
                               ).show();
                             },

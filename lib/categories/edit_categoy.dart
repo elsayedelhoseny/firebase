@@ -6,19 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/textformfield.dart';
 
-class AddCategory extends StatefulWidget {
-  const AddCategory({super.key});
+class EditCategory extends StatefulWidget {
+  const EditCategory({super.key});
 
   @override
-  State<AddCategory> createState() => _AddCategoryState();
+  State<EditCategory> createState() => _EditCategoryState();
 }
 
-class _AddCategoryState extends State<AddCategory> {
+class _EditCategoryState extends State<EditCategory> {
   TextEditingController name = TextEditingController();
   CollectionReference category =
       FirebaseFirestore.instance.collection('category');
   bool isLoading = false;
-  Future<void> addUser() {
+  Future<void> EditUser() {
     isLoading = true;
     return category
         .add({
@@ -39,7 +39,7 @@ class _AddCategoryState extends State<AddCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Caregory'),
+        title: const Text('Edit Caregory'),
       ),
       body: Form(
         key: formkey,
@@ -60,10 +60,10 @@ class _AddCategoryState extends State<AddCategory> {
               const SizedBox(height: 30),
               Center(
                   child: CustomButtonAuth(
-                      title: "Add",
+                      title: "Save",
                       onPressed: () async {
                         if (formkey.currentState!.validate()) {
-                          addUser();
+                          EditUser();
                         }
                       })),
             ],

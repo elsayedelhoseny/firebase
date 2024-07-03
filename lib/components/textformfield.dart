@@ -17,6 +17,7 @@ class CustomTextForm extends StatelessWidget {
       controller: mycontroller,
       validator: validator,
       decoration: InputDecoration(
+          hintMaxLines: 4,
           hintText: hinttext,
           hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
           contentPadding:

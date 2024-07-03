@@ -3,10 +3,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tests/categories/edit_categoy.dart';
+import 'package:tests/note/note_view.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -90,6 +90,15 @@ class _HomepageState extends State<Homepage> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return InkWell(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return NoteView(
+                                    docId: data[index].id,
+                                  );
+                                },
+                              ));
+                            },
                             onLongPress: () {
                               AwesomeDialog(
                                 context: context,

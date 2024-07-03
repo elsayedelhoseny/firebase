@@ -1,38 +1,42 @@
-// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error, body_might_complete_normally_catch_error
+// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/textformfield.dart';
+import 'package:tests/note/note_view.dart';
 
-class AddCategory extends StatefulWidget {
-  const AddCategory({super.key});
-
+class AddNote extends StatefulWidget {
+  const AddNote({super.key, required this.docId});
+  final String docId;
   @override
-  State<AddCategory> createState() => _AddCategoryState();
+  State<AddNote> createState() => _AddNoteState();
 }
 
-class _AddCategoryState extends State<AddCategory> {
-  TextEditingController name = TextEditingController();
-  CollectionReference category =
-      FirebaseFirestore.instance.collection('category');
+class _AddNoteState extends State<AddNote> {
+  TextEditingController note = TextEditingController();
+
   bool isLoading = false;
-  Future<void> addUser() {
+  Future<void> addNote() {
+    CollectionReference category = FirebaseFirestore.instance
+        .collection('category')
+        .doc(widget.docId)
+        .collection('note');
     isLoading = true;
     return category
         .add({
-          'name': name.text,
-          'id': FirebaseAuth.instance.currentUser!.uid,
+          'note': note.text,
         })
-        .then((value) => Navigator.pushNamedAndRemoveUntil(
-            context, 'homepage', (route) => false))
+        .then((value) => Navigator.push(context, MaterialPageRoute(
+              builder: (context) {
+                return NoteView(
+                  docId: widget.docId,
+                );
+              },
+            )))
         .catchError((error) {
           isLoading = false;
-          if (kDebugMode) {
-            print("Failed to add user: $error");
-          }
+          print("Failed to add user: $error");
         });
   }
 
@@ -42,7 +46,7 @@ class _AddCategoryState extends State<AddCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Caregory'),
+        title: const Text('Add Note'),
       ),
       body: Form(
         key: formkey,
@@ -58,15 +62,15 @@ class _AddCategoryState extends State<AddCategory> {
                     }
                     return null;
                   },
-                  hinttext: "ُEnter Your Name",
-                  mycontroller: name),
+                  hinttext: "ُEnter Your notes",
+                  mycontroller: note),
               const SizedBox(height: 30),
               Center(
                   child: CustomButtonAuth(
                       title: "Add",
                       onPressed: () async {
                         if (formkey.currentState!.validate()) {
-                          addUser();
+                          addNote();
                         }
                       })),
             ],

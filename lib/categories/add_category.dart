@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/textformfield.dart';
@@ -20,6 +21,7 @@ class _AddCategoryState extends State<AddCategory> {
     return category
         .add({
           'name': name.text,
+          'id': FirebaseAuth.instance.currentUser!.uid,
         })
         .then((value) => Navigator.pushReplacementNamed(context, 'homepage'))
         .catchError((error) => print("Failed to add user: $error"));

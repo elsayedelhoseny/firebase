@@ -1,48 +1,46 @@
-// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error, body_might_complete_normally_catch_error
+// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/textformfield.dart';
 
-class AddCategory extends StatefulWidget {
-  const AddCategory({super.key});
-
+class EditCategory extends StatefulWidget {
+  const EditCategory({super.key, required this.docid, required this.oldName});
+  final String docid;
+  final String oldName;
   @override
-  State<AddCategory> createState() => _AddCategoryState();
+  State<EditCategory> createState() => _EditCategoryState();
 }
 
-class _AddCategoryState extends State<AddCategory> {
+class _EditCategoryState extends State<EditCategory> {
   TextEditingController name = TextEditingController();
   CollectionReference category =
       FirebaseFirestore.instance.collection('category');
   bool isLoading = false;
-  Future<void> addUser() {
-    isLoading = true;
-    return category
-        .add({
-          'name': name.text,
-          'id': FirebaseAuth.instance.currentUser!.uid,
-        })
-        .then((value) => Navigator.pushNamedAndRemoveUntil(
-            context, 'homepage', (route) => false))
-        .catchError((error) {
-          isLoading = false;
-          if (kDebugMode) {
-            print("Failed to add user: $error");
-          }
-        });
+  EditUser() async {
+    try {
+      isLoading = true;
+      setState(() {});
+      await category.doc(widget.docid).update({
+        'name': name.text,
+      });
+      Navigator.pushNamedAndRemoveUntil(context, 'homepage', (route) => false);
+    } catch (e) {}
   }
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    name.text = widget.oldName;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Caregory'),
+        title: const Text('Edit Caregory'),
       ),
       body: Form(
         key: formkey,
@@ -63,10 +61,10 @@ class _AddCategoryState extends State<AddCategory> {
               const SizedBox(height: 30),
               Center(
                   child: CustomButtonAuth(
-                      title: "Add",
+                      title: "Save",
                       onPressed: () async {
                         if (formkey.currentState!.validate()) {
-                          addUser();
+                          EditUser();
                         }
                       })),
             ],

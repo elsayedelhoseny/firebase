@@ -3,9 +3,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tests/categories/edit_categoy.dart';
+import 'package:tests/note/note_view.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -19,8 +20,10 @@ class _HomepageState extends State<Homepage> {
   bool isLoading = true;
 
   getData() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('category').get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('category')
+        .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .get();
     data.addAll(querySnapshot.docs);
     isLoading = false;
     setState(() {});
@@ -87,25 +90,41 @@ class _HomepageState extends State<Homepage> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return InkWell(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return NoteView(
+                                    docId: data[index].id,
+                                  );
+                                },
+                              ));
+                            },
                             onLongPress: () {
                               AwesomeDialog(
                                 context: context,
                                 dialogType: DialogType.warning,
                                 animType: AnimType.rightSlide,
                                 title: 'Warning',
-                                desc: 'هل انت متاكد من عمليه الحذف ؟ ',
-                                btnOkOnPress: () async {
+                                desc: 'اختر ماذا تريد ؟ ',
+                                btnCancelText: 'حذف',
+                                btnOkText: 'تعديل ',
+                                btnOkOnPress: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return EditCategory(
+                                        docid: data[index].id,
+                                        oldName: data[index]['name'],
+                                      );
+                                    },
+                                  ));
+                                },
+                                btnCancelOnPress: () async {
                                   await FirebaseFirestore.instance
                                       .collection('category')
                                       .doc(data[index].id)
                                       .delete();
                                   Navigator.pushReplacementNamed(
                                       context, 'homepage');
-                                },
-                                btnCancelOnPress: () {
-                                  if (kDebugMode) {
-                                    print("========================Cancel");
-                                  }
                                 },
                               ).show();
                             },

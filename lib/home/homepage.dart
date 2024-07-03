@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tests/categories/edit_categoy.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -98,13 +99,15 @@ class _HomepageState extends State<Homepage> {
                                 desc: 'اختر ماذا تريد ؟ ',
                                 btnCancelText: 'حذف',
                                 btnOkText: 'تعديل ',
-                                btnOkOnPress: () async {
-                                  await FirebaseFirestore.instance
-                                      .collection('category')
-                                      .doc(data[index].id)
-                                      .delete();
-                                  Navigator.pushReplacementNamed(
-                                      context, 'homepage');
+                                btnOkOnPress: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return EditCategory(
+                                        docid: data[index].id,
+                                        oldName: data[index]['name'],
+                                      );
+                                    },
+                                  ));
                                 },
                                 btnCancelOnPress: () async {
                                   await FirebaseFirestore.instance

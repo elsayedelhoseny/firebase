@@ -1,14 +1,14 @@
-// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error
+// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/textformfield.dart';
 
 class EditCategory extends StatefulWidget {
-  const EditCategory({super.key});
-
+  const EditCategory({super.key, required this.docid, required this.oldName});
+  final String docid;
+  final String oldName;
   @override
   State<EditCategory> createState() => _EditCategoryState();
 }
@@ -18,22 +18,23 @@ class _EditCategoryState extends State<EditCategory> {
   CollectionReference category =
       FirebaseFirestore.instance.collection('category');
   bool isLoading = false;
-  Future<void> EditUser() {
-    isLoading = true;
-    return category
-        .add({
-          'name': name.text,
-          'id': FirebaseAuth.instance.currentUser!.uid,
-        })
-        .then((value) => Navigator.pushNamedAndRemoveUntil(
-            context, 'homepage', (route) => false))
-        .catchError((error) {
-          isLoading = false;
-          print("Failed to add user: $error");
-        });
+  EditUser() async {
+    try {
+      isLoading = true;
+      setState(() {});
+      await category.doc(widget.docid).update({
+        'name': name.text,
+      });
+      Navigator.pushNamedAndRemoveUntil(context, 'homepage', (route) => false);
+    } catch (e) {}
   }
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    name.text = widget.oldName;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

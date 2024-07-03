@@ -3,6 +3,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -101,7 +102,11 @@ class _HomepageState extends State<Homepage> {
                                   Navigator.pushReplacementNamed(
                                       context, 'homepage');
                                 },
-                                btnCancelOnPress: () {},
+                                btnCancelOnPress: () {
+                                  if (kDebugMode) {
+                                    print("========================Cancel");
+                                  }
+                                },
                               ).show();
                             },
                             child: Card(

@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_local_variable
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +19,7 @@ class _LoginState extends State<Login> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  bool isLoading = false;
   Future signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) {
@@ -103,49 +104,61 @@ class _LoginState extends State<Login> {
               ],
             ),
           ),
-          CustomButtonAuth(
-              title: "login",
-              onPressed: () async {
-                if (formkey.currentState!.validate()) {
-                  try {
-                    final credential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: email.text, password: password.text);
-                    if (FirebaseAuth.instance.currentUser!.emailVerified) {
-                      Navigator.of(context).pushReplacementNamed("homepage");
-                    } else {
-                      FirebaseAuth.instance.currentUser!
-                          .sendEmailVerification();
+          isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: Colors.orange,
+                ))
+              : CustomButtonAuth(
+                  title: "login",
+                  onPressed: () async {
+                    if (formkey.currentState!.validate()) {
+                      try {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        final credential = await FirebaseAuth.instance
+                            .signInWithEmailAndPassword(
+                                email: email.text, password: password.text);
+                        setState(() {
+                          isLoading = false;
+                        });
+                        if (FirebaseAuth.instance.currentUser!.emailVerified) {
+                          Navigator.of(context)
+                              .pushReplacementNamed("homepage");
+                        } else {
+                          FirebaseAuth.instance.currentUser!
+                              .sendEmailVerification();
 
-                      AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.error,
-                        animType: AnimType.rightSlide,
-                        title: 'Error',
-                        desc: 'الرجاء تفعيل الحساب اولا ',
-                      ).show();
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            animType: AnimType.rightSlide,
+                            title: 'Error',
+                            desc: 'الرجاء تفعيل الحساب اولا ',
+                          ).show();
+                        }
+                      } on FirebaseAuthException catch (e) {
+                        if (e.code == 'user-not-found') {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            animType: AnimType.rightSlide,
+                            title: 'Error',
+                            desc: 'No user found for that email.',
+                          ).show();
+                        } else if (e.code == 'wrong-password') {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            animType: AnimType.rightSlide,
+                            title: 'Error',
+                            desc: 'Wrong password provided for that user.',
+                          ).show();
+                        }
+                      }
                     }
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'user-not-found') {
-                      AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.error,
-                        animType: AnimType.rightSlide,
-                        title: 'Error',
-                        desc: 'No user found for that email.',
-                      ).show();
-                    } else if (e.code == 'wrong-password') {
-                      AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.error,
-                        animType: AnimType.rightSlide,
-                        title: 'Error',
-                        desc: 'Wrong password provided for that user.',
-                      ).show();
-                    }
-                  }
-                }
-              }),
+                  }),
           Container(height: 20),
           MaterialButton(
               height: 40,

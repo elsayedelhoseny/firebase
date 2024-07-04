@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tests/note/add_note.dart';
+import 'package:tests/note/edit_note.dart';
 
 class NoteView extends StatefulWidget {
   const NoteView({super.key, required this.docId});
@@ -103,28 +104,38 @@ class _NotepageeState extends State<NoteView> {
                                       dialogType: DialogType.warning,
                                       animType: AnimType.rightSlide,
                                       title: 'Warning',
-                                      desc: 'اختر ماذا تريد ؟ ',
+                                      desc: 'هل انت متامد من الحذف ؟ ',
                                       btnCancelText: 'حذف',
-                                      btnOkText: 'تعديل ',
-                                      btnOkOnPress: () {
-                                        // Navigator.push(context, MaterialPageRoute(
-                                        //   builder: (context) {
-                                        //     return EditCategory(
-                                        //       docid: data[index].id,
-                                        //       oldName: data[index]['name'],
-                                        //     );
-                                        //   },
-                                        // ));
-                                      },
+                                      btnOkText: 'لا ',
+                                      btnOkOnPress: () {},
                                       btnCancelOnPress: () async {
-                                        // await FirebaseFirestore.instance
-                                        //     .collection('category')
-                                        //     .doc(data[index].id)
-                                        //     .delete();
-                                        // Navigator.pushReplacementNamed(
-                                        //     context, 'homepage');
+                                        await FirebaseFirestore.instance
+                                            .collection('category')
+                                            .doc(widget.docId)
+                                            .collection('note')
+                                            .doc(data[index].id)
+                                            .delete();
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                          builder: (context) {
+                                            return NoteView(
+                                              docId: widget.docId,
+                                            );
+                                          },
+                                        ));
                                       },
                                     ).show();
+                                  },
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return EditNote(
+                                          docId: data[index].id,
+                                          categoryId: widget.docId,
+                                          value: data[index]['note'],
+                                        );
+                                      },
+                                    ));
                                   },
                                   child: Card(
                                     elevation: 6.0,

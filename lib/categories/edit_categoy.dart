@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error, use_build_context_synchronously
+// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error, use_build_context_synchronously, non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,18 +15,21 @@ class EditCategory extends StatefulWidget {
 
 class _EditCategoryState extends State<EditCategory> {
   TextEditingController name = TextEditingController();
-  CollectionReference category =
-      FirebaseFirestore.instance.collection('category');
+
   bool isLoading = false;
   EditUser() async {
     try {
+      CollectionReference category =
+          FirebaseFirestore.instance.collection('category');
       isLoading = true;
       setState(() {});
       await category.doc(widget.docid).update({
         'name': name.text,
       });
       Navigator.pushNamedAndRemoveUntil(context, 'homepage', (route) => false);
-    } catch (e) {}
+    } catch (e) {
+      isLoading = false;
+    }
   }
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();

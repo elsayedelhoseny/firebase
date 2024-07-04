@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tests/components/custombuttonauth.dart';
 import 'package:tests/components/textformfield.dart';
@@ -36,7 +37,11 @@ class _AddNoteState extends State<AddNote> {
             )))
         .catchError((error) {
           isLoading = false;
-          print("Failed to add user: $error");
+          if (kDebugMode) {
+            if (kDebugMode) {
+              print("Failed to add user: $error");
+            }
+          }
         });
   }
 

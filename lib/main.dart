@@ -6,6 +6,7 @@ import 'package:tests/auth/forgot_password.dart';
 import 'package:tests/auth/login.dart';
 import 'package:tests/auth/signup.dart';
 import 'package:tests/categories/add_category.dart';
+import 'package:tests/filter_view.dart';
 import 'package:tests/firebase_options.dart';
 import 'package:tests/home/homepage.dart';
 
@@ -55,7 +56,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       home: (FirebaseAuth.instance.currentUser != null &&
               FirebaseAuth.instance.currentUser!.emailVerified)
-          ? const Homepage()
+          ? const FilterView()
           : const Login(),
       routes: {
         "signup": (context) => const SignUp(),

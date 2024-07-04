@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error, use_build_context_synchronously
+// ignore_for_file: must_be_immutable, invalid_return_type_for_catch_error, use_build_context_synchronously, non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,9 @@ class _EditCategoryState extends State<EditCategory> {
         'name': name.text,
       });
       Navigator.pushNamedAndRemoveUntil(context, 'homepage', (route) => false);
-    } catch (e) {}
+    } catch (e) {
+      isLoading = false;
+    }
   }
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();

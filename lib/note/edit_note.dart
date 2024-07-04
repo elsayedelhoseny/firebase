@@ -25,13 +25,15 @@ class _EditNoteState extends State<EditNote> {
 
   bool isLoading = false;
   EditUser() async {
+    CollectionReference category = FirebaseFirestore.instance
+        .collection('category')
+        .doc(widget.docId)
+        .collection('note');
     try {
-      CollectionReference category =
-          FirebaseFirestore.instance.collection('category');
       isLoading = true;
       setState(() {});
-      await category.doc(widget.docId).update({
-        'name': note.text,
+      await category.doc().update({
+        'note': note.text,
       });
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
@@ -42,6 +44,7 @@ class _EditNoteState extends State<EditNote> {
       ));
     } catch (e) {
       isLoading = false;
+      setState(() {});
     }
   }
 
@@ -50,6 +53,12 @@ class _EditNoteState extends State<EditNote> {
   void initState() {
     note.text = widget.value;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    note.dispose();
+    super.dispose();
   }
 
   @override

@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -98,6 +98,34 @@ class _NotepageeState extends State<NoteView> {
                               itemCount: data.length,
                               itemBuilder: (context, index) {
                                 return InkWell(
+                                  onLongPress: () {
+                                    AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.warning,
+                                      animType: AnimType.rightSlide,
+                                      title: 'Warning',
+                                      desc: 'هل انت متامد من الحذف ؟ ',
+                                      btnCancelText: 'حذف',
+                                      btnOkText: 'لا ',
+                                      btnOkOnPress: () {},
+                                      btnCancelOnPress: () async {
+                                        await FirebaseFirestore.instance
+                                            .collection('category')
+                                            .doc(widget.docId)
+                                            .collection('note')
+                                            .doc(data[index].id)
+                                            .delete();
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                          builder: (context) {
+                                            return NoteView(
+                                              docId: widget.docId,
+                                            );
+                                          },
+                                        ));
+                                      },
+                                    ).show();
+                                  },
                                   onTap: () {
                                     Navigator.push(context, MaterialPageRoute(
                                       builder: (context) {
@@ -108,18 +136,6 @@ class _NotepageeState extends State<NoteView> {
                                         );
                                       },
                                     ));
-                                  },
-                                  onLongPress: () {
-                                    AwesomeDialog(
-                                      context: context,
-                                      dialogType: DialogType.warning,
-                                      animType: AnimType.rightSlide,
-                                      title: 'Warning',
-                                      desc: 'اختر ماذا تريد ؟ ',
-                                      btnCancelText: 'حذف',
-                                      btnOkText: 'تعديل ',
-                                      btnOkOnPress: () {},
-                                    ).show();
                                   },
                                   child: Card(
                                     elevation: 6.0,

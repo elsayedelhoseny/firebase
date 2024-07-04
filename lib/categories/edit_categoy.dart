@@ -15,11 +15,12 @@ class EditCategory extends StatefulWidget {
 
 class _EditCategoryState extends State<EditCategory> {
   TextEditingController name = TextEditingController();
-  CollectionReference category =
-      FirebaseFirestore.instance.collection('category');
+
   bool isLoading = false;
   EditUser() async {
     try {
+      CollectionReference category =
+          FirebaseFirestore.instance.collection('category');
       isLoading = true;
       setState(() {});
       await category.doc(widget.docid).update({
